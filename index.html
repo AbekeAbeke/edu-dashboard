@@ -212,6 +212,7 @@ const REG={
 function regName(r,l){const k=(r||"").trim();return REG[k]?REG[k][l]:(k||"—");}
 
 let LANG="ru", DATA=[], NAT={}, sortKey="pct", sortDir=-1, charts={}, lastUpdated=null, dataDate=null;
+let SELID=null, QVAL="";   // preserved across auto-refresh
 
 /* ---------- CSV parsing ---------- */
 function parseCSV(text){
@@ -262,9 +263,9 @@ function computeNational(){
 }
 
 /* ---------- data load ---------- */
-async function loadData(){
+async function loadData(silent){
   const btn=document.getElementById("reloadBtn"); if(btn)btn.textContent="…";
-  document.getElementById("app").innerHTML='<div class="loading"><div class="spinner"></div><span>'+T[LANG].loading+'</span></div>';
+  if(!silent)document.getElementById("app").innerHTML='<div class="loading"><div class="spinner"></div><span>'+T[LANG].loading+'</span></div>';
   let text=null,lastErr=null;
   for(const url of ENDPOINTS){
     try{ const res=await fetch(url,{cache:"no-store"}); if(!res.ok)throw new Error("HTTP "+res.status);
@@ -338,13 +339,15 @@ function render(){
     </div>
     <div class="card">
       <h2>${t.tableTitle}</h2>
-      <div class="controls"><div class="search"><input id="q" type="text" placeholder="${t.searchPh}" oninput="drawTable()"></div></div>
+      <div class="controls"><div class="search"><input id="q" type="text" placeholder="${t.searchPh}" value="${QVAL.replace(/"/g,'&quot;')}" oninput="drawTable()"></div></div>
       <div class="tablewrap"><table id="tbl"></table></div>
       <div class="note">${t.liveNote}</div>
     </div>`;
   drawRankChart("cTop",DATA.slice(0,12),"#1e9e63");
   drawRankChart("cLow",DATA.slice(-12),"#d64545");
-  fillSpotSelect();drawSpot(DATA[0].id);drawTable();
+  fillSpotSelect();
+  drawSpot(SELID&&DATA.some(x=>x.id==SELID)?SELID:DATA[0].id);
+  drawTable();
   const up=lastUpdated?lastUpdated.toLocaleString(LANG==="kz"?"kk-KZ":"ru-RU"):"";
   document.getElementById("srcbar").innerHTML=`${t.loadedAt}: ${up} · <a href="${POWERBI_URL}" target="_blank" rel="noopener">${t.pbiLink}</a>`;
 }
@@ -365,6 +368,7 @@ function fillSpotSelect(){
 }
 function drawSpot(id){
   const t=T[LANG];const r=DATA.find(x=>x.id==id);if(!r)return;
+  SELID=id;
   document.getElementById("spotSel").value=id;
   const diff=r.pct-NAT.pctAvg;const up=diff>=0;
   document.getElementById("spotOut").innerHTML=`
@@ -392,7 +396,8 @@ function drawSpot(id){
 }
 function drawTable(){
   const t=T[LANG];
-  const q=(document.getElementById("q").value||"").toLowerCase().trim();
+  QVAL=document.getElementById("q").value||"";
+  const q=QVAL.toLowerCase().trim();
   let rows=DATA.filter(r=>!q||r.name.toLowerCase().includes(q)||regName(r.region,LANG).toLowerCase().includes(q)||regName(r.region,"ru").toLowerCase().includes(q));
   rows=rows.slice().sort((a,b)=>{let v;if(sortKey==="name")v=a.name.localeCompare(b.name,"ru");else if(sortKey==="region")v=regName(a.region,LANG).localeCompare(regName(b.region,LANG),"ru");else v=a[sortKey]-b[sortKey];return v*sortDir;});
   const arrow=k=>sortKey===k?(sortDir===1?" ▲":" ▼"):"";
@@ -409,6 +414,8 @@ function drawTable(){
 function setSort(k){if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=(k==="name"||k==="region")?1:-1;}drawTable();}
 
 headerText();loadData();
+/* auto-refresh every 15 minutes while the page is open (only when visible) */
+setInterval(()=>{if(document.visibilityState==="visible")loadData(true);},15*60*1000);
 </script>
 </body>
 </html>
