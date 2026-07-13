@@ -10,8 +10,8 @@
   color-scheme: light;
   /* Executive palette: deep navy ink, steel-blue accent, muted status colors */
   --bg:#f3f5f8;--card:#ffffff;--ink:#1c2b3a;--muted:#5f6b7a;--line:#e2e7ee;
-  --navy:#16324f;--navy2:#1f4568;--accent:#2e6da4;--accent2:#4a89c8;
-  --good:#2e7d5b;--mid:#b07d2b;--bad:#b04a4a;--neutral:#8a94a3;
+  --navy:#16324f;--navy2:#1f4568;--accent:#1a73c9;--accent2:#3e97e8;
+  --good:#1e9e63;--mid:#e08a2e;--bad:#d64545;--neutral:#8a94a3;
   --shadow:0 4px 18px rgba(22,50,79,.08);
 }
 *{box-sizing:border-box}
@@ -34,7 +34,10 @@ header.top p{margin:6px 0 0;opacity:.85;font-size:13.5px}
 .disclaimer .ic{font-size:16px;line-height:1.3}
 .disclaimer a{color:#8a6a1e;font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:18px 0 4px}
-.kpi{background:var(--card);border-radius:12px;padding:18px 18px 16px;box-shadow:var(--shadow);border-top:3px solid var(--accent)}
+.kpi{background:var(--card);border-radius:12px;padding:18px 18px 16px;box-shadow:var(--shadow);border-top:4px solid var(--accent)}
+.kpi.k1{border-top-color:var(--navy)}.kpi.k1 .val{color:var(--navy)}
+.kpi.k2{border-top-color:var(--accent)}.kpi.k2 .val{color:var(--accent)}
+.kpi.k3{border-top-color:var(--good)}.kpi.k3 .val{color:var(--good)}
 .kpi .val{font-size:29px;font-weight:800;line-height:1.05;color:var(--navy)}
 .kpi .lab{color:var(--muted);font-size:13px;margin-top:6px}
 .kpi .sub{font-size:12px;margin-top:8px;font-weight:600;color:var(--muted)}
@@ -54,6 +57,13 @@ select:focus,input:focus{border-color:var(--accent)}
 .spot .s2{background:var(--navy2)}
 .spot .s3{background:var(--accent)}
 .spot .s4{background:var(--accent2)}
+.hbars{margin-top:18px;display:grid;gap:9px}
+.hbar{display:grid;grid-template-columns:170px 1fr 120px;align-items:center;gap:12px;font-size:12.5px}
+.hbar .l{color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar .track{background:#eceff4;border-radius:6px;height:20px;overflow:hidden}
+.hbar .fill{height:100%;border-radius:6px;min-width:4px;transition:width .4s}
+.hbar .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(max-width:640px){.hbar{grid-template-columns:110px 1fr 90px}}
 .spotmeta{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px 22px;font-size:13.5px;color:var(--muted)}
 .spotmeta b{color:var(--ink)}
 .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:12px}
@@ -141,6 +151,7 @@ const T={
     spotTitle:"Профиль университета",spotHint:"Выберите вуз, чтобы увидеть его показатели и место в рейтинге.",
     selectPh:"Выберите университет…",
     sLic:"Лицензий",sStarted:"Начали",sAct:"Активировано",sPct:"Активация",
+    bLic:"Выдано лицензий",bStarted:"Начали обучение",bAct:"Активировано",bAvg:"Средняя по стране",
     rank:"Место по стране",of:"из",above:"выше среднего",below:"ниже среднего",
     region:"Регион",district:"Район",
     tableTitle:"Все университеты",searchPh:"Поиск по вузу или региону…",
@@ -163,6 +174,7 @@ const T={
     spotTitle:"Университет профилі",spotHint:"Көрсеткіштері мен рейтингтегі орнын көру үшін ЖОО-ны таңдаңыз.",
     selectPh:"Университетті таңдаңыз…",
     sLic:"Лицензиялар",sStarted:"Бастады",sAct:"Белсендірілді",sPct:"Белсендіру",
+    bLic:"Берілген лицензиялар",bStarted:"Оқуды бастады",bAct:"Белсендірілді",bAvg:"Ел бойынша орташа",
     rank:"Ел бойынша орны",of:"ішінде",above:"орташадан жоғары",below:"орташадан төмен",
     region:"Аймақ",district:"Аудан",
     tableTitle:"Барлық университеттер",searchPh:"ЖОО немесе аймақ бойынша іздеу…",
@@ -294,7 +306,7 @@ function showError(e){
 }
 
 /* muted, professional status scale */
-function pctColor(p){if(p<10)return"#b04a4a";if(p<25)return"#c07f35";if(p<50)return"#a3913a";if(p<75)return"#4d7f6e";return"#2e7d5b";}
+function pctColor(p){if(p<10)return"#d64545";if(p<25)return"#e08a2e";if(p<50)return"#c9a227";if(p<75)return"#35a877";return"#1e9e63";}
 const fmt=n=>n.toLocaleString(LANG==="kz"?"kk-KZ":"ru-RU");
 
 function setLang(l){LANG=l;document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("active",b.dataset.l===l));document.documentElement.lang=l==="kz"?"kk":"ru";headerText();if(DATA.length)render();}
@@ -310,10 +322,10 @@ function render(){
   headerText();const t=T[LANG];
   document.getElementById("app").innerHTML=`
     <div class="kpis">
-      <div class="kpi"><div class="val">${fmt(DATA.length)}</div><div class="lab">${t.universities}</div></div>
-      <div class="kpi"><div class="val">${fmt(NAT.lic)}</div><div class="lab">${t.licenses}</div><div class="sub">${fmt(NAT.started)} ${t.started}</div></div>
-      <div class="kpi"><div class="val">${fmt(NAT.act)}</div><div class="lab">${t.activated}</div></div>
-      <div class="kpi"><div class="val">${NAT.pctAvg.toFixed(2)}%</div><div class="lab">${t.national}</div><div class="sub">${t.overallRate}: ${NAT.pctWeighted.toFixed(2)}%</div></div>
+      <div class="kpi k1"><div class="val">${fmt(DATA.length)}</div><div class="lab">${t.universities}</div></div>
+      <div class="kpi k2"><div class="val">${fmt(NAT.lic)}</div><div class="lab">${t.licenses}</div><div class="sub" style="color:var(--accent)">${fmt(NAT.started)} ${t.started}</div></div>
+      <div class="kpi k3"><div class="val">${fmt(NAT.act)}</div><div class="lab">${t.activated}</div></div>
+      <div class="kpi" style="border-top-color:${pctColor(NAT.pctAvg)}"><div class="val" style="color:${pctColor(NAT.pctAvg)}">${NAT.pctAvg.toFixed(2)}%</div><div class="lab">${t.national}</div><div class="sub">${t.overallRate}: ${NAT.pctWeighted.toFixed(2)}%</div></div>
     </div>
     <div class="grid2">
       <div class="card"><h2>${t.topTitle}</h2><p class="hint">${t.topHint}</p><div class="chartbox tall"><canvas id="cTop"></canvas></div></div>
@@ -330,8 +342,8 @@ function render(){
       <div class="tablewrap"><table id="tbl"></table></div>
       <div class="note">${t.liveNote}</div>
     </div>`;
-  drawRankChart("cTop",DATA.slice(0,12),"#2e7d5b");
-  drawRankChart("cLow",DATA.slice(-12),"#b04a4a");
+  drawRankChart("cTop",DATA.slice(0,12),"#1e9e63");
+  drawRankChart("cLow",DATA.slice(-12),"#d64545");
   fillSpotSelect();drawSpot(DATA[0].id);drawTable();
   const up=lastUpdated?lastUpdated.toLocaleString(LANG==="kz"?"kk-KZ":"ru-RU"):"";
   document.getElementById("srcbar").innerHTML=`${t.loadedAt}: ${up} · <a href="${POWERBI_URL}" target="_blank" rel="noopener">${t.pbiLink}</a>`;
@@ -341,10 +353,10 @@ function drawRankChart(canvasId,set,color){
   const key=canvasId;
   if(charts[key])charts[key].destroy();
   charts[key]=new Chart(document.getElementById(canvasId),{type:"bar",
-    data:{labels:set.map(r=>shorten(r.name)),datasets:[{data:set.map(r=>+r.pct.toFixed(2)),backgroundColor:color,borderRadius:4,barThickness:14}]},
+    data:{labels:set.map(r=>shorten(r.name)),datasets:[{data:set.map(r=>+r.pct.toFixed(2)),backgroundColor:color,borderRadius:4,barThickness:14,minBarLength:5}]},
     options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>set[c[0].dataIndex].name,label:c=>c.parsed.x+"% · "+regName(set[c.dataIndex].region,LANG)}}},
-      scales:{x:{ticks:{callback:v=>v+"%"},grid:{color:"#eef1f5"}},y:{ticks:{font:{size:10}},grid:{display:false}}}}});
+      scales:{x:{min:0,max:100,ticks:{callback:v=>v+"%"},grid:{color:"#eef1f5"}},y:{ticks:{font:{size:10}},grid:{display:false}}}}});
 }
 function fillSpotSelect(){
   const t=T[LANG];const sel=document.getElementById("spotSel");
@@ -361,6 +373,12 @@ function drawSpot(id){
       <div class="spotcard s2"><div class="n">${fmt(r.started)}</div><div class="t">${t.sStarted}</div></div>
       <div class="spotcard s3"><div class="n">${fmt(r.activated)}</div><div class="t">${t.sAct}</div></div>
       <div class="spotcard s4"><div class="n">${r.pct.toFixed(2)}%</div><div class="t">${t.sPct}</div></div>
+    </div>
+    <div class="hbars">
+      <div class="hbar"><span class="l">${t.bLic}</span><div class="track"><div class="fill" style="width:100%;background:var(--navy)"></div></div><span class="v">${fmt(r.licenses)} · 100%</span></div>
+      <div class="hbar"><span class="l">${t.bStarted}</span><div class="track"><div class="fill" style="width:${Math.min(100,r.licenses?r.started/r.licenses*100:0).toFixed(2)}%;background:var(--accent)"></div></div><span class="v">${fmt(r.started)} · ${(r.licenses?r.started/r.licenses*100:0).toFixed(1)}%</span></div>
+      <div class="hbar"><span class="l">${t.bAct}</span><div class="track"><div class="fill" style="width:${Math.min(100,r.pct).toFixed(2)}%;background:${pctColor(r.pct)}"></div></div><span class="v">${fmt(r.activated)} · ${r.pct.toFixed(1)}%</span></div>
+      <div class="hbar"><span class="l">${t.bAvg}</span><div class="track"><div class="fill" style="width:${Math.min(100,NAT.pctAvg).toFixed(2)}%;background:var(--neutral)"></div></div><span class="v">${NAT.pctAvg.toFixed(2)}%</span></div>
     </div>
     <div class="spotmeta">
       <span><b>${r.name}</b></span>
