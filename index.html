@@ -133,8 +133,11 @@ tr:hover td{background:#f7f9fc}
 const SHEET_ID="1q3SkquUjRjqp3LHqT47zbWx9oWBne1N2z9fG5zBSMeU";
 const PUBLISHED_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vS1CVX1xx2qx3YJXPhkgeHmhw4dNFIkBxTCFzOHj_RwYaXQBF0GOxIFfWExpeAmvj7Xwn0bZFqAVt9A/pub?output=csv";
 const POWERBI_URL="https://app.powerbi.com/view?r=eyJrIjoiNjM4OWUyZDQtMWUxNy00Njc3LTllZjEtNDBmNzgzZjA2Y2JkIiwidCI6IjQ0YWY2MTM1LTFmMTYtNGU3ZS04MzViLTAwYWY1MTdkZTNmNyIsImMiOjl9";
-const ENDPOINTS=[PUBLISHED_CSV,
-  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=0`];
+/* Dashboard_Data tab: auto-refreshed from Power BI by the sheet's script
+   (daily + every 6h). No contact data. Falls back to the published CSV. */
+const ENDPOINTS=[
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=1969320767`,
+  PUBLISHED_CSV];
 /* Refresh_Info tab: official Power BI refresh date, updated automatically */
 const META_CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=433329528`;
 
