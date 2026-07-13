@@ -146,7 +146,7 @@ const T={
     tableTitle:"Все университеты",searchPh:"Поиск по вузу или региону…",
     cRank:"№",cName:"Университет",cRegion:"Регион",cLic:"Лицензии",cStarted:"Начали",cAct:"Актив.",cPct:"Активация %",
     disclaimer:'Данные синхронизируются с базой ChatGPT Edu через Power BI и могут отставать до <b>48 часов</b>. Официальная дата последнего обновления данных указана на <a href="'+POWERBI_URL+'" target="_blank" rel="noopener">странице 3 отчёта Power BI</a>.',
-    dataAsOf:"Последнее обновление данных (Power BI)",loadedAt:"Страница загружена",
+    dataAsOf:"Последнее обновление данных",loadedAt:"Страница загружена",
     liveNote:"Данные загружаются автоматически при каждом открытии страницы. Кнопка ⟳ вверху — обновить.",
     pbiLink:"Отчёт Power BI",
     errTitle:"Не удалось загрузить данные.",
@@ -168,7 +168,7 @@ const T={
     tableTitle:"Барлық университеттер",searchPh:"ЖОО немесе аймақ бойынша іздеу…",
     cRank:"№",cName:"Университет",cRegion:"Аймақ",cLic:"Лицензия",cStarted:"Бастады",cAct:"Белс.",cPct:"Белсендіру %",
     disclaimer:'Деректер Power BI арқылы ChatGPT Edu базасымен синхрондалады және <b>48 сағатқа дейін</b> кешігуі мүмкін. Деректердің соңғы ресми жаңартылған күні <a href="'+POWERBI_URL+'" target="_blank" rel="noopener">Power BI есебінің 3-бетінде</a> көрсетілген.',
-    dataAsOf:"Деректердің соңғы жаңартылуы (Power BI)",loadedAt:"Бет жүктелді",
+    dataAsOf:"Деректердің соңғы жаңартылуы",loadedAt:"Бет жүктелді",
     liveNote:"Деректер бет ашылған сайын автоматты түрде жүктеледі. Жоғарыдағы ⟳ түймесі — жаңарту.",
     pbiLink:"Power BI есебі",
     errTitle:"Деректерді жүктеу мүмкін болмады.",
@@ -275,13 +275,15 @@ async function loadMeta(){
     const res=await fetch(META_CSV,{cache:"no-store"});
     if(!res.ok)return;
     const rows=parseCSV(await res.text());
+    let pbi=null,refreshed=null;
     for(const r of rows){
       if(!r||!r.length)continue;
-      if(/power\s*bi/i.test(r[0]||"")){
-        const v=r.slice(1).find(x=>x&&x.trim());
-        if(v){dataDate=v.trim();return;}
-      }
+      const v=r.slice(1).find(x=>x&&x.trim());
+      if(!v)continue;
+      if(/power\s*bi/i.test(r[0]||""))pbi=v.trim();
+      else if(/refresh|обновлен|жаңартыл/i.test(r[0]||""))refreshed=v.trim();
     }
+    if(pbi||refreshed)dataDate=pbi||refreshed;
   }catch(e){/* keep dataDate from data sheet or null */}
 }
 function showError(e){
