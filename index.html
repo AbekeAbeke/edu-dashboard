@@ -269,6 +269,10 @@ const REG={
 };
 function regName(r,l){const k=(r||"").trim();return REG[k]?REG[k][l]:(k||"—");}
 
+/* HTML-escape everything that originates from the spreadsheet before it
+   touches innerHTML — protects dashboard visitors from injected markup */
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
 /* Display-level standardization of university names:
    strips legal-form clutter (КеАҚ, АҚ, ЖШС, "коммерциялық емес
    акционерлік қоғамы", мекемесі …). Raw names stay untouched in the
@@ -428,7 +432,7 @@ function headerText(){
   document.getElementById("ttl").textContent=t.title;
   document.getElementById("sub").textContent=t.sub;
   const d=document.getElementById("disc");d.hidden=false;
-  document.getElementById("discTxt").innerHTML=t.disclaimer+(dataDate?" · <b>"+t.dataAsOf+": "+dataDate+"</b>":"");
+  document.getElementById("discTxt").innerHTML=t.disclaimer+(dataDate?" · <b>"+t.dataAsOf+": "+esc(dataDate)+"</b>":"");
 }
 
 function render(){
@@ -486,7 +490,7 @@ function comboFilter(){
     .filter(r=>!q||cleanName(r.name).toLowerCase().includes(q)||r.name.toLowerCase().includes(q))
     .slice(0,40);
   list.innerHTML=opts.length
-    ? opts.map(r=>`<div onclick="selectUni(${r.id})"><span class="pct" style="background:${pctColor(r.pct)};color:${pctInk(r.pct)}">${r.pct.toFixed(0)}%</span>${cleanName(r.name)}</div>`).join("")
+    ? opts.map(r=>`<div onclick="selectUni(${r.id})"><span class="pct" style="background:${pctColor(r.pct)};color:${pctInk(r.pct)}">${r.pct.toFixed(0)}%</span>${esc(cleanName(r.name))}</div>`).join("")
     : `<div class="nores">${t.noMatch}</div>`;
   list.hidden=false;
 }
@@ -518,12 +522,12 @@ function drawSpot(id){
       <div class="hbar"><span class="l">${t.bAvg}</span><div class="track"><div class="fill" style="width:${Math.min(100,NAT.pctAvg).toFixed(2)}%;background:var(--neutral)"></div></div><span class="v">${NAT.pctAvg.toFixed(2)}%</span></div>
     </div>
     <div class="spotmeta">
-      <span><b>${cleanName(r.name)}</b></span>
+      <span><b>${esc(cleanName(r.name))}</b></span>
       <span>${t.rank}: <b>#${r.rank}</b> ${t.of} ${DATA.length}</span>
     </div>
     <div class="spotmeta">
-      <span>${t.region}: <b>${regName(r.region,LANG)}</b></span>
-      <span>${t.district}: <b>${r.district||'—'}</b></span>
+      <span>${t.region}: <b>${esc(regName(r.region,LANG))}</b></span>
+      <span>${t.district}: <b>${esc(r.district||'—')}</b></span>
     </div>`;
 }
 function drawTable(){
@@ -539,8 +543,8 @@ function drawTable(){
     const s=statusOf(r.pct),sc=STATUS_COLORS[s];
     h+=`<tr>
     <td class="num">${r.rank}</td>
-    <td class="name">${cleanName(r.name)}</td>
-    <td class="reg">${regName(r.region,LANG)}</td>
+    <td class="name">${esc(cleanName(r.name))}</td>
+    <td class="reg">${esc(regName(r.region,LANG))}</td>
     <td class="num">${fmt(r.licenses)}</td><td class="num">${fmt(r.started)}</td><td class="num">${fmt(r.activated)}</td>
     <td class="num"><div class="pcell"><span class="pv" style="color:${pctColor(r.pct)}">${r.pct.toFixed(1)}%</span><span class="ptrack"><span class="pfill" style="width:${Math.min(100,r.pct).toFixed(1)}%;background:${pctColor(r.pct)}"></span></span></div></td>
     <td><span class="statchip"><i style="background:${sc}"></i>${t.st[s]}</span></td></tr>`;});
