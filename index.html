@@ -76,7 +76,24 @@ select:focus,input:focus{border-color:var(--accent)}
 .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:12px}
 .controls .search{flex:1;min-width:220px}
 .tablewrap{overflow:auto;border-radius:10px;border:1px solid var(--line)}
-table{border-collapse:collapse;width:100%;font-size:13px;min-width:700px}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:880px}
+.pcell{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.pv{font-weight:700;min-width:50px;text-align:right;font-variant-numeric:tabular-nums}
+.ptrack{flex:0 0 92px;height:8px;background:#e9edf2;border-radius:99px;overflow:hidden}
+.pfill{display:block;height:100%;border-radius:99px;min-width:5px}
+.statchip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--ink);background:#f2f5f9;border-radius:99px;padding:3px 10px;white-space:nowrap}
+.statchip i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 auto}
+/* project timeline */
+.timeline{padding:16px 20px 14px}
+.tl-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.tl-head h2{font-size:12.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);margin:0}
+.tl-left{font-size:13px;font-weight:700;color:var(--navy)}
+.tl-track{position:relative;height:6px;background:#e2e7ee;border-radius:99px;margin:14px 0 8px}
+.tl-fill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:99px}
+.tl-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid #fff;box-shadow:0 0 0 3px rgba(26,115,201,.25)}
+.tl-months{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted)}
+.tl-dates{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.45}
+.tl-dates b{color:var(--ink);font-size:12.5px}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
 th{background:#f7f9fc;position:sticky;top:0;cursor:pointer;user-select:none;font-size:12px;color:var(--muted);z-index:1}
 th:hover{color:var(--accent)}
@@ -119,6 +136,8 @@ tr:hover td{background:#f7f9fc}
   .hbar{grid-template-columns:96px 1fr 84px;font-size:11.5px;gap:8px}
   .hbar .track{height:16px}
   th,td{padding:8px 9px}
+  .tl-months{display:none}
+  .ptrack{flex:0 0 64px}
 }
 </style>
 </head>
@@ -190,7 +209,9 @@ const T={
     rank:"Место по стране",of:"из",above:"выше среднего",below:"ниже среднего",
     region:"Регион",district:"Район",
     tableTitle:"Все университеты",searchPh:"Поиск по вузу или региону…",
-    cRank:"№",cName:"Университет",cRegion:"Регион",cLic:"Лицензии",cStarted:"Начали обучение",cAct:"Актив.",cPct:"Активация %",
+    cRank:"№",cName:"Университет",cRegion:"Регион",cLic:"Лицензии",cStarted:"Начали обучение",cAct:"Актив.",cPct:"Активация %",cStatus:"Статус",
+    st:["Требует внимания","Начальный этап","По плану","Отлично"],
+    tlTitle:"Сроки проекта · 12 месяцев",tlStart:"Запуск проекта",tlEnd:"Завершение проекта",
     disclaimer:'Данные синхронизируются с базой ChatGPT Edu через Power BI и могут отставать до <b>48 часов</b>. Официальная дата последнего обновления данных указана на <a href="'+POWERBI_URL+'" target="_blank" rel="noopener">странице 3 отчёта Power BI</a>.',
     dataAsOf:"Последнее обновление данных",loadedAt:"Страница загружена",
     liveNote:"Данные загружаются автоматически при каждом открытии страницы. Кнопка ⟳ вверху — обновить.",
@@ -213,7 +234,9 @@ const T={
     rank:"Ел бойынша орны",of:"ішінде",above:"орташадан жоғары",below:"орташадан төмен",
     region:"Аймақ",district:"Аудан",
     tableTitle:"Барлық университеттер",searchPh:"ЖОО немесе аймақ бойынша іздеу…",
-    cRank:"№",cName:"Университет",cRegion:"Аймақ",cLic:"Лицензия",cStarted:"Оқуды бастады",cAct:"Белс.",cPct:"Белсендіру %",
+    cRank:"№",cName:"Университет",cRegion:"Аймақ",cLic:"Лицензия",cStarted:"Оқуды бастады",cAct:"Белс.",cPct:"Белсендіру %",cStatus:"Статус",
+    st:["Назар қажет","Бастапқы кезең","Жоспар бойынша","Өте жақсы"],
+    tlTitle:"Жоба мерзімі · 12 ай",tlStart:"Жобаның басталуы",tlEnd:"Жобаның аяқталуы",
     disclaimer:'Деректер Power BI арқылы ChatGPT Edu базасымен синхрондалады және <b>48 сағатқа дейін</b> кешігуі мүмкін. Деректердің соңғы ресми жаңартылған күні <a href="'+POWERBI_URL+'" target="_blank" rel="noopener">Power BI есебінің 3-бетінде</a> көрсетілген.',
     dataAsOf:"Деректердің соңғы жаңартылуы",loadedAt:"Бет жүктелді",
     liveNote:"Деректер бет ашылған сайын автоматты түрде жүктеледі. Жоғарыдағы ⟳ түймесі — жаңарту.",
@@ -375,6 +398,28 @@ function pctColor(p){
   return p>=99?"hsl(135,85%,42%)":`hsl(${h},72%,42%)`;
 }
 function pctInk(p){const h=p*1.25;return h>40&&h<85?"#332a00":"#fff";}
+/* status categories: <10 needs attention, 10–25 getting started, 25–50 on track, ≥50 excellent */
+function statusOf(p){return p>=50?3:p>=25?2:p>=10?1:0;}
+const STATUS_COLORS=["#d64545","#e08a2e","#b7a02c","#1e9e63"];
+/* project timeline 30.03.2026 → 29.03.2027 */
+const TL_START=new Date(2026,2,30),TL_END=new Date(2027,2,29);
+const TL_MONTHS={
+  ru:["мар'26","апр","май","июн","июл","авг","сен","окт","ноя","дек","янв'27","фев'27","мар'27"],
+  kz:["нау'26","сәу","мам","мау","шіл","там","қыр","қаз","қар","жел","қаң'27","ақп'27","нау'27"]};
+function timelineHTML(){
+  const t=T[LANG],now=Date.now();
+  const ep=Math.max(0,Math.min(100,(now-TL_START)/(TL_END-TL_START)*100));
+  const daysLeft=Math.max(0,Math.ceil((TL_END-now)/86400000));
+  const leftTxt=LANG==="kz"
+    ? `${daysLeft} күн қалды · ${ep.toFixed(0)}% өтті`
+    : `Осталось ${daysLeft} дн. · пройдено ${ep.toFixed(0)}%`;
+  return `<div class="card timeline">
+    <div class="tl-head"><h2>${t.tlTitle}</h2><span class="tl-left">${leftTxt}</span></div>
+    <div class="tl-track"><div class="tl-fill" style="width:${ep.toFixed(2)}%"></div><div class="tl-dot" style="left:${ep.toFixed(2)}%"></div></div>
+    <div class="tl-months">${TL_MONTHS[LANG].map(m=>`<span>${m}</span>`).join("")}</div>
+    <div class="tl-dates"><div><b>30.03.2026</b><br>${t.tlStart}</div><div style="text-align:right"><b>29.03.2027</b><br>${t.tlEnd}</div></div>
+  </div>`;
+}
 const fmt=n=>n.toLocaleString(LANG==="kz"?"kk-KZ":"ru-RU");
 
 function setLang(l){LANG=l;document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("active",b.dataset.l===l));document.documentElement.lang=l==="kz"?"kk":"ru";headerText();if(DATA.length)render();}
@@ -389,6 +434,7 @@ function headerText(){
 function render(){
   headerText();const t=T[LANG];
   document.getElementById("app").innerHTML=`
+    ${timelineHTML()}
     <div class="kpis">
       <div class="kpi k1"><div class="val">${fmt(DATA.length)}</div><div class="lab">${t.universities}</div></div>
       <div class="kpi k2"><div class="val">${fmt(NAT.lic)}</div><div class="lab">${t.licenses}</div><div class="sub" style="color:var(--accent)">${fmt(NAT.started)} ${t.started}</div></div>
@@ -485,19 +531,23 @@ function drawTable(){
   QVAL=document.getElementById("q").value||"";
   const q=QVAL.toLowerCase().trim();
   let rows=DATA.filter(r=>!q||r.name.toLowerCase().includes(q)||cleanName(r.name).toLowerCase().includes(q)||regName(r.region,LANG).toLowerCase().includes(q)||regName(r.region,"ru").toLowerCase().includes(q));
-  rows=rows.slice().sort((a,b)=>{let v;if(sortKey==="name")v=cleanName(a.name).localeCompare(cleanName(b.name),"ru");else if(sortKey==="region")v=regName(a.region,LANG).localeCompare(regName(b.region,LANG),"ru");else v=a[sortKey]-b[sortKey];return v*sortDir;});
+  rows=rows.slice().sort((a,b)=>{let v;if(sortKey==="name")v=cleanName(a.name).localeCompare(cleanName(b.name),"ru");else if(sortKey==="region")v=regName(a.region,LANG).localeCompare(regName(b.region,LANG),"ru");else if(sortKey==="status")v=a.pct-b.pct;else v=a[sortKey]-b[sortKey];return v*sortDir;});
   const arrow=k=>sortKey===k?(sortDir===1?" ▲":" ▼"):"";
   const th=(k,lab,cls="")=>`<th class="${cls}" onclick="setSort('${k}')">${lab}${arrow(k)}</th>`;
-  let h=`<thead><tr>${th("rank",t.cRank)}${th("name",t.cName)}${th("region",t.cRegion)}${th("licenses",t.cLic,"num")}${th("started",t.cStarted,"num")}${th("activated",t.cAct,"num")}${th("pct",t.cPct,"num")}</tr></thead><tbody>`;
-  rows.forEach(r=>{h+=`<tr>
+  let h=`<thead><tr>${th("rank",t.cRank)}${th("name",t.cName)}${th("region",t.cRegion)}${th("licenses",t.cLic,"num")}${th("started",t.cStarted,"num")}${th("activated",t.cAct,"num")}${th("pct",t.cPct,"num")}${th("status",t.cStatus)}</tr></thead><tbody>`;
+  rows.forEach(r=>{
+    const s=statusOf(r.pct),sc=STATUS_COLORS[s];
+    h+=`<tr>
     <td class="num">${r.rank}</td>
     <td class="name">${cleanName(r.name)}</td>
     <td class="reg">${regName(r.region,LANG)}</td>
     <td class="num">${fmt(r.licenses)}</td><td class="num">${fmt(r.started)}</td><td class="num">${fmt(r.activated)}</td>
-    <td class="num"><span class="pill" style="background:${pctColor(r.pct)};color:${pctInk(r.pct)}">${r.pct.toFixed(1)}%</span></td></tr>`;});
+    <td class="num"><div class="pcell"><span class="pv" style="color:${pctColor(r.pct)}">${r.pct.toFixed(1)}%</span><span class="ptrack"><span class="pfill" style="width:${Math.min(100,r.pct).toFixed(1)}%;background:${pctColor(r.pct)}"></span></span></div></td>
+    <td><span class="statchip"><i style="background:${sc}"></i>${t.st[s]}</span></td></tr>`;});
   h+="</tbody>";document.getElementById("tbl").innerHTML=h;
 }
 function setSort(k){if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=(k==="name"||k==="region")?1:-1;}drawTable();}
+
 
 headerText();loadData();
 /* auto-refresh every 15 minutes while the page is open (only when visible) */
