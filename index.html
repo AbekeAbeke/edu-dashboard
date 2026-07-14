@@ -49,6 +49,13 @@ header.top p{margin:6px 0 0;opacity:.85;font-size:13.5px}
 .chartbox.tall{height:430px}
 select,input[type=text]{width:100%;padding:12px 14px;border-radius:9px;border:1.5px solid var(--line);font-size:14px;color:var(--ink);background:#fff;outline:none;}
 select:focus,input:focus{border-color:var(--accent)}
+.combo{position:relative}
+.combolist{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--line);
+  border-radius:9px;max-height:300px;overflow:auto;z-index:20;box-shadow:0 8px 24px rgba(22,50,79,.16)}
+.combolist div{padding:10px 14px;cursor:pointer;font-size:13.5px;border-bottom:1px solid #f2f5f9;display:flex;align-items:center;gap:10px}
+.combolist div:hover{background:#f0f5fa}
+.combolist .pct{flex:0 0 auto;min-width:44px;text-align:center;padding:2px 6px;border-radius:6px;font-size:11.5px;font-weight:700}
+.combolist .nores{color:var(--muted);cursor:default}
 .spot{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px}
 .spotcard{border-radius:10px;padding:16px;color:#fff}
 .spotcard .n{font-size:25px;font-weight:800}
@@ -88,6 +95,31 @@ tr:hover td{background:#f7f9fc}
 .srcbar{font-size:11.5px;color:var(--muted);text-align:center;margin-top:26px}
 .srcbar a{color:var(--accent);text-decoration:none;font-weight:600}
 @media(max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.spot{grid-template-columns:repeat(2,1fr)}}
+/* phones */
+@media(max-width:640px){
+  .wrap{padding:12px 10px 40px}
+  header.top{padding:14px 16px;border-radius:12px}
+  header.top h1{font-size:16.5px}
+  header.top p{font-size:12px}
+  .reload{padding:8px 11px}
+  .lang button{padding:7px 12px;font-size:12px}
+  .disclaimer{padding:11px 13px;font-size:12px}
+  .kpis{gap:10px;margin:14px 0 2px}
+  .kpi{padding:13px 13px 12px}
+  .kpi .val{font-size:22px}
+  .kpi .lab{font-size:11.5px}
+  .card{padding:14px;border-radius:10px}
+  .card h2{font-size:15px}
+  .chartbox.tall{height:380px}
+  .spot{gap:8px}
+  .spotcard{padding:11px}
+  .spotcard .n{font-size:18px}
+  .spotcard .t{font-size:11px}
+  .spotmeta{font-size:12.5px;gap:6px 14px}
+  .hbar{grid-template-columns:96px 1fr 84px;font-size:11.5px;gap:8px}
+  .hbar .track{height:16px}
+  th,td{padding:8px 9px}
+}
 </style>
 </head>
 <body>
@@ -148,17 +180,17 @@ const T={
     sub:"Показатели активации лицензий ChatGPT Edu по университетам Казахстана.",
     loading:"Загрузка данных…",
     universities:"Университетов",licenses:"Всего лицензий",activated:"Активировано аккаунтов",
-    national:"Средняя активация (по вузам)",overallRate:"Общий охват",started:"Начали",
+    national:"Средняя активация (по вузам)",overallRate:"Общий охват",started:"Начали обучение",
     topTitle:"Лидеры активации",topHint:"Топ-12 вузов по проценту активации лицензий.",
     lowTitle:"Требуют внимания",lowHint:"12 вузов с наименьшим процентом активации.",
-    spotTitle:"Профиль университета",spotHint:"Выберите вуз, чтобы увидеть его показатели и место в рейтинге.",
-    selectPh:"Выберите университет…",
-    sLic:"Лицензий",sStarted:"Начали",sAct:"Активировано",sPct:"Активация",
+    spotTitle:"Профиль университета",spotHint:"Начните вводить название вуза, чтобы найти его и увидеть показатели.",
+    selectPh:"Поиск университета…",noMatch:"Ничего не найдено",
+    sLic:"Лицензий",sStarted:"Начали обучение",sAct:"Активировано",sPct:"Процент активации",
     bLic:"Выдано лицензий",bStarted:"Начали обучение",bAct:"Активировано",bAvg:"Средняя по стране",
     rank:"Место по стране",of:"из",above:"выше среднего",below:"ниже среднего",
     region:"Регион",district:"Район",
     tableTitle:"Все университеты",searchPh:"Поиск по вузу или региону…",
-    cRank:"№",cName:"Университет",cRegion:"Регион",cLic:"Лицензии",cStarted:"Начали",cAct:"Актив.",cPct:"Активация %",
+    cRank:"№",cName:"Университет",cRegion:"Регион",cLic:"Лицензии",cStarted:"Начали обучение",cAct:"Актив.",cPct:"Активация %",
     disclaimer:'Данные синхронизируются с базой ChatGPT Edu через Power BI и могут отставать до <b>48 часов</b>. Официальная дата последнего обновления данных указана на <a href="'+POWERBI_URL+'" target="_blank" rel="noopener">странице 3 отчёта Power BI</a>.',
     dataAsOf:"Последнее обновление данных",loadedAt:"Страница загружена",
     liveNote:"Данные загружаются автоматически при каждом открытии страницы. Кнопка ⟳ вверху — обновить.",
@@ -171,17 +203,17 @@ const T={
     sub:"Қазақстан университеттері бойынша ChatGPT Edu лицензияларын белсендіру көрсеткіштері.",
     loading:"Деректер жүктелуде…",
     universities:"Университеттер",licenses:"Барлық лицензиялар",activated:"Белсендірілген аккаунттар",
-    national:"Орташа белсендіру (ЖОО бойынша)",overallRate:"Жалпы қамту",started:"Бастады",
+    national:"Орташа белсендіру (ЖОО бойынша)",overallRate:"Жалпы қамту",started:"Оқуды бастады",
     topTitle:"Белсендіру көшбасшылары",topHint:"Лицензияларды белсендіру пайызы бойынша үздік 12 ЖОО.",
     lowTitle:"Назар аударуды қажет етеді",lowHint:"Белсендіру пайызы ең төмен 12 ЖОО.",
-    spotTitle:"Университет профилі",spotHint:"Көрсеткіштері мен рейтингтегі орнын көру үшін ЖОО-ны таңдаңыз.",
-    selectPh:"Университетті таңдаңыз…",
-    sLic:"Лицензиялар",sStarted:"Бастады",sAct:"Белсендірілді",sPct:"Белсендіру",
+    spotTitle:"Университет профилі",spotHint:"ЖОО-ны табу үшін атауын тере бастаңыз.",
+    selectPh:"Университетті іздеу…",noMatch:"Ештеңе табылмады",
+    sLic:"Лицензиялар",sStarted:"Оқуды бастады",sAct:"Белсендірілді",sPct:"Белсендіру пайызы",
     bLic:"Берілген лицензиялар",bStarted:"Оқуды бастады",bAct:"Белсендірілді",bAvg:"Ел бойынша орташа",
     rank:"Ел бойынша орны",of:"ішінде",above:"орташадан жоғары",below:"орташадан төмен",
     region:"Аймақ",district:"Аудан",
     tableTitle:"Барлық университеттер",searchPh:"ЖОО немесе аймақ бойынша іздеу…",
-    cRank:"№",cName:"Университет",cRegion:"Аймақ",cLic:"Лицензия",cStarted:"Бастады",cAct:"Белс.",cPct:"Белсендіру %",
+    cRank:"№",cName:"Университет",cRegion:"Аймақ",cLic:"Лицензия",cStarted:"Оқуды бастады",cAct:"Белс.",cPct:"Белсендіру %",
     disclaimer:'Деректер Power BI арқылы ChatGPT Edu базасымен синхрондалады және <b>48 сағатқа дейін</b> кешігуі мүмкін. Деректердің соңғы ресми жаңартылған күні <a href="'+POWERBI_URL+'" target="_blank" rel="noopener">Power BI есебінің 3-бетінде</a> көрсетілген.',
     dataAsOf:"Деректердің соңғы жаңартылуы",loadedAt:"Бет жүктелді",
     liveNote:"Деректер бет ашылған сайын автоматты түрде жүктеледі. Жоғарыдағы ⟳ түймесі — жаңарту.",
@@ -213,6 +245,33 @@ const REG={
   "Туркестанская область":{ru:"Туркестанская обл.",kz:"Түркістан облысы"}
 };
 function regName(r,l){const k=(r||"").trim();return REG[k]?REG[k][l]:(k||"—");}
+
+/* Display-level standardization of university names:
+   strips legal-form clutter (КеАҚ, АҚ, ЖШС, "коммерциялық емес
+   акционерлік қоғамы", мекемесі …). Raw names stay untouched in the
+   sheet — the Power BI sync matches by raw name. */
+function cleanName(s){
+  let n=String(s||"");
+  [/мекемесі нысанындағы коммерциялық емес үкіметтік емес ұйым/gi,
+   /коммерциялық емес акционерлік қоғам(ына|ы)?/gi,
+   /Коммерциялық емес Акционерлік қоғам(ы)?/gi,
+   /КОММЕРЦИЯЛЫҚ\s+ЕМЕС АКЦИОНЕРЛІК ҚОҒАМЫ/gi,
+   /коммерциялық емес АҚ/gi,
+   /акционерлік қоғамы?/gi,
+   /Жауапкершiлiгi шектеулi серiктестiгі\.?/gi,
+   /жоғары білім мекемесі/gi,
+   /Білім беру мекемесі/gi,
+   /Жеке Меншік Мекемесі/gi,
+   /жеке мекемесі/gi,
+   /шетелдік оқу орны»?/gi
+  ].forEach(re=>n=n.replace(re," "));
+  n=n.split(/\s+/).filter(w=>{
+    const t=w.replace(/[«»"“”().,]/g,"");
+    return !["КеАҚ","КЕАҚ","КЕ","АҚ","АО","НАО","ЖШС","ТОО","МЕББМ","ЖЖКББМ","ЖММ","ББМ","БМ","РМК","ШЖҚ","Мекемесі","мекемесі"].includes(t);
+  }).join(" ");
+  n=n.replace(/[«»"“”]/g," ").replace(/\s{2,}/g," ").replace(/^[\s,.\-–]+|[\s,.\-–]+$/g,"").trim();
+  return n||String(s||"");
+}
 
 let LANG="ru", DATA=[], NAT={}, sortKey="pct", sortDir=-1, charts={}, lastUpdated=null, dataDate=null;
 let SELID=null, QVAL="";   // preserved across auto-refresh
@@ -309,8 +368,13 @@ function showError(e){
   document.getElementById("srcbar").innerHTML='';
 }
 
-/* muted, professional status scale */
-function pctColor(p){if(p<10)return"#d64545";if(p<25)return"#e08a2e";if(p<50)return"#c9a227";if(p<75)return"#35a877";return"#1e9e63";}
+/* continuous traffic-light scale: 0% bright red → 50% olive/yellow → 100% neon green */
+function pctColor(p){
+  p=Math.max(0,Math.min(100,p));
+  const h=Math.round(p*1.25);                 // 0 → red, 62 → yellow, 125 → green
+  return p>=99?"hsl(135,85%,42%)":`hsl(${h},72%,42%)`;
+}
+function pctInk(p){const h=p*1.25;return h>40&&h<85?"#332a00":"#fff";}
 const fmt=n=>n.toLocaleString(LANG==="kz"?"kk-KZ":"ru-RU");
 
 function setLang(l){LANG=l;document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("active",b.dataset.l===l));document.documentElement.lang=l==="kz"?"kk":"ru";headerText();if(DATA.length)render();}
@@ -337,7 +401,11 @@ function render(){
     </div>
     <div class="card">
       <h2>${t.spotTitle}</h2><p class="hint">${t.spotHint}</p>
-      <select id="spotSel" onchange="drawSpot(this.value)"></select>
+      <div class="combo">
+        <input id="spotSearch" type="text" placeholder="${t.selectPh}" autocomplete="off"
+          oninput="comboFilter()" onfocus="comboFilter()">
+        <div id="comboList" class="combolist" hidden></div>
+      </div>
       <div id="spotOut"></div>
     </div>
     <div class="card">
@@ -348,7 +416,6 @@ function render(){
     </div>`;
   drawRankChart("cTop",DATA.slice(0,12),"#1e9e63");
   drawRankChart("cLow",DATA.slice(-12),"#d64545");
-  fillSpotSelect();
   drawSpot(SELID&&DATA.some(x=>x.id==SELID)?SELID:DATA[0].id);
   drawTable();
   const up=lastUpdated?lastUpdated.toLocaleString(LANG==="kz"?"kk-KZ":"ru-RU"):"";
@@ -359,27 +426,44 @@ function drawRankChart(canvasId,set,color){
   const key=canvasId;
   if(charts[key])charts[key].destroy();
   charts[key]=new Chart(document.getElementById(canvasId),{type:"bar",
-    data:{labels:set.map(r=>shorten(r.name)),datasets:[{data:set.map(r=>+r.pct.toFixed(2)),backgroundColor:color,borderRadius:4,barThickness:14,minBarLength:5}]},
+    data:{labels:set.map(r=>shorten(cleanName(r.name))),datasets:[{data:set.map(r=>+r.pct.toFixed(2)),backgroundColor:color,borderRadius:4,barThickness:14,minBarLength:5}]},
     options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>set[c[0].dataIndex].name,label:c=>c.parsed.x+"% · "+regName(set[c.dataIndex].region,LANG)}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>cleanName(set[c[0].dataIndex].name),label:c=>c.parsed.x+"% · "+regName(set[c.dataIndex].region,LANG)}}},
       scales:{x:{min:0,max:100,ticks:{callback:v=>v+"%"},grid:{color:"#eef1f5"}},y:{ticks:{font:{size:10}},grid:{display:false}}}}});
 }
-function fillSpotSelect(){
-  const t=T[LANG];const sel=document.getElementById("spotSel");
-  const opts=DATA.slice().sort((a,b)=>a.name.localeCompare(b.name,"ru"));
-  sel.innerHTML=`<option disabled>${t.selectPh}</option>`+opts.map(r=>`<option value="${r.id}">${r.name}</option>`).join("");
+/* searchable university selector */
+function comboFilter(){
+  const t=T[LANG];
+  const q=(document.getElementById("spotSearch").value||"").toLowerCase().trim();
+  const list=document.getElementById("comboList");
+  const opts=DATA.slice().sort((a,b)=>cleanName(a.name).localeCompare(cleanName(b.name),"ru"))
+    .filter(r=>!q||cleanName(r.name).toLowerCase().includes(q)||r.name.toLowerCase().includes(q))
+    .slice(0,40);
+  list.innerHTML=opts.length
+    ? opts.map(r=>`<div onclick="selectUni(${r.id})"><span class="pct" style="background:${pctColor(r.pct)};color:${pctInk(r.pct)}">${r.pct.toFixed(0)}%</span>${cleanName(r.name)}</div>`).join("")
+    : `<div class="nores">${t.noMatch}</div>`;
+  list.hidden=false;
 }
+function selectUni(id){
+  const r=DATA.find(x=>x.id==id);if(!r)return;
+  document.getElementById("spotSearch").value=cleanName(r.name);
+  document.getElementById("comboList").hidden=true;
+  drawSpot(id);
+}
+document.addEventListener("click",e=>{
+  const c=document.querySelector(".combo");
+  if(c&&!c.contains(e.target)){const l=document.getElementById("comboList");if(l)l.hidden=true;}
+});
 function drawSpot(id){
   const t=T[LANG];const r=DATA.find(x=>x.id==id);if(!r)return;
   SELID=id;
-  document.getElementById("spotSel").value=id;
-  const diff=r.pct-NAT.pctAvg;const up=diff>=0;
+  const si=document.getElementById("spotSearch");if(si)si.value=cleanName(r.name);
   document.getElementById("spotOut").innerHTML=`
     <div class="spot">
       <div class="spotcard s1"><div class="n">${fmt(r.licenses)}</div><div class="t">${t.sLic}</div></div>
       <div class="spotcard s2"><div class="n">${fmt(r.started)}</div><div class="t">${t.sStarted}</div></div>
       <div class="spotcard s3"><div class="n">${fmt(r.activated)}</div><div class="t">${t.sAct}</div></div>
-      <div class="spotcard s4"><div class="n">${r.pct.toFixed(2)}%</div><div class="t">${t.sPct}</div></div>
+      <div class="spotcard" style="background:${pctColor(r.pct)};color:${pctInk(r.pct)}"><div class="n">${r.pct.toFixed(2)}%</div><div class="t">${t.sPct}</div></div>
     </div>
     <div class="hbars">
       <div class="hbar"><span class="l">${t.bLic}</span><div class="track"><div class="fill" style="width:100%;background:var(--navy)"></div></div><span class="v">${fmt(r.licenses)} · 100%</span></div>
@@ -388,9 +472,8 @@ function drawSpot(id){
       <div class="hbar"><span class="l">${t.bAvg}</span><div class="track"><div class="fill" style="width:${Math.min(100,NAT.pctAvg).toFixed(2)}%;background:var(--neutral)"></div></div><span class="v">${NAT.pctAvg.toFixed(2)}%</span></div>
     </div>
     <div class="spotmeta">
-      <span><b>${r.name}</b></span>
+      <span><b>${cleanName(r.name)}</b></span>
       <span>${t.rank}: <b>#${r.rank}</b> ${t.of} ${DATA.length}</span>
-      <span style="color:${up?'var(--good)':'var(--bad)'}"><b>${up?'▲ +':'▼ '}${diff.toFixed(2)} ${LANG==='kz'?'п.т.':'п.п.'}</b> ${up?t.above:t.below}</span>
     </div>
     <div class="spotmeta">
       <span>${t.region}: <b>${regName(r.region,LANG)}</b></span>
@@ -401,17 +484,17 @@ function drawTable(){
   const t=T[LANG];
   QVAL=document.getElementById("q").value||"";
   const q=QVAL.toLowerCase().trim();
-  let rows=DATA.filter(r=>!q||r.name.toLowerCase().includes(q)||regName(r.region,LANG).toLowerCase().includes(q)||regName(r.region,"ru").toLowerCase().includes(q));
-  rows=rows.slice().sort((a,b)=>{let v;if(sortKey==="name")v=a.name.localeCompare(b.name,"ru");else if(sortKey==="region")v=regName(a.region,LANG).localeCompare(regName(b.region,LANG),"ru");else v=a[sortKey]-b[sortKey];return v*sortDir;});
+  let rows=DATA.filter(r=>!q||r.name.toLowerCase().includes(q)||cleanName(r.name).toLowerCase().includes(q)||regName(r.region,LANG).toLowerCase().includes(q)||regName(r.region,"ru").toLowerCase().includes(q));
+  rows=rows.slice().sort((a,b)=>{let v;if(sortKey==="name")v=cleanName(a.name).localeCompare(cleanName(b.name),"ru");else if(sortKey==="region")v=regName(a.region,LANG).localeCompare(regName(b.region,LANG),"ru");else v=a[sortKey]-b[sortKey];return v*sortDir;});
   const arrow=k=>sortKey===k?(sortDir===1?" ▲":" ▼"):"";
   const th=(k,lab,cls="")=>`<th class="${cls}" onclick="setSort('${k}')">${lab}${arrow(k)}</th>`;
   let h=`<thead><tr>${th("rank",t.cRank)}${th("name",t.cName)}${th("region",t.cRegion)}${th("licenses",t.cLic,"num")}${th("started",t.cStarted,"num")}${th("activated",t.cAct,"num")}${th("pct",t.cPct,"num")}</tr></thead><tbody>`;
   rows.forEach(r=>{h+=`<tr>
     <td class="num">${r.rank}</td>
-    <td class="name">${r.name}</td>
+    <td class="name">${cleanName(r.name)}</td>
     <td class="reg">${regName(r.region,LANG)}</td>
     <td class="num">${fmt(r.licenses)}</td><td class="num">${fmt(r.started)}</td><td class="num">${fmt(r.activated)}</td>
-    <td class="num"><span class="pill" style="background:${pctColor(r.pct)}">${r.pct.toFixed(1)}%</span></td></tr>`;});
+    <td class="num"><span class="pill" style="background:${pctColor(r.pct)};color:${pctInk(r.pct)}">${r.pct.toFixed(1)}%</span></td></tr>`;});
   h+="</tbody>";document.getElementById("tbl").innerHTML=h;
 }
 function setSort(k){if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=(k==="name"||k==="region")?1:-1;}drawTable();}
