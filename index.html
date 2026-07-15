@@ -195,21 +195,21 @@ const META_CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=o
 /* ---------- i18n ---------- */
 const T={
   ru:{
-    title:"ChatGPT Edu — Панель внедрения в вузах",
-    sub:"Показатели активации лицензий ChatGPT Edu по университетам Казахстана.",
+    title:"ChatGPT Edu в вузах Казахстана",
+    sub:"Показатели активации лицензий ChatGPT Edu по вузам Казахстана.",
     loading:"Загрузка данных…",
-    universities:"Университетов",licenses:"Всего лицензий",activated:"Активировано аккаунтов",
-    national:"Средняя активация (по вузам)",overallRate:"Общий охват",started:"Начали обучение",
+    universities:"Вузов",licenses:"Выделено всего лицензий",activated:"Активировано лицензий",
+    national:"Общий охват активации",natSub:"активировано ÷ выделено лицензий",started:"Начали обучение",
     topTitle:"Лидеры активации",topHint:"Топ-12 вузов по проценту активации лицензий.",
     lowTitle:"Требуют внимания",lowHint:"12 вузов с наименьшим процентом активации.",
-    spotTitle:"Профиль университета",spotHint:"Начните вводить название вуза, чтобы найти его и увидеть показатели.",
-    selectPh:"Поиск университета…",noMatch:"Ничего не найдено",
+    spotTitle:"Профиль вуза",spotHint:"Начните вводить название вуза, чтобы найти его и увидеть показатели.",
+    selectPh:"Поиск вуза…",noMatch:"Ничего не найдено",
     sLic:"Лицензий",sStarted:"Начали обучение",sAct:"Активировано",sPct:"Процент активации",
-    bLic:"Выдано лицензий",bStarted:"Начали обучение",bAct:"Активировано",bAvg:"Средняя по стране",
+    bLic:"Выдано лицензий",bStarted:"Начали обучение",bAct:"Активировано",bAvg:"Общий охват по стране",
     rank:"Место по стране",of:"из",above:"выше среднего",below:"ниже среднего",
     region:"Регион",district:"Район",
-    tableTitle:"Все университеты",searchPh:"Поиск по вузу или региону…",
-    cRank:"№",cName:"Университет",cRegion:"Регион",cLic:"Лицензии",cStarted:"Начали обучение",cAct:"Актив.",cPct:"Активация %",cStatus:"Статус",
+    tableTitle:"Все вузы",searchPh:"Поиск по вузу или региону…",
+    cRank:"№",cName:"Вуз",cRegion:"Регион",cLic:"Лицензии",cStarted:"Начали обучение",cAct:"Актив.",cPct:"Активация %",cStatus:"Статус",
     st:["Требует внимания","Начальный этап","По плану","Отлично"],
     tlTitle:"Сроки проекта · 12 месяцев",tlStart:"Запуск проекта",tlEnd:"Завершение проекта",
     disclaimer:'Данные синхронизируются с базой ChatGPT Edu через Power BI и могут отставать до <b>48 часов</b>. Официальная дата последнего обновления данных указана на <a href="'+POWERBI_URL+'" target="_blank" rel="noopener">странице 3 отчёта Power BI</a>.',
@@ -220,21 +220,21 @@ const T={
     errBody:"Проверьте, что таблица-источник опубликована в интернете (<b>Файл → Опубликовать в интернете → CSV</b>) и ссылка указана в поле <code>PUBLISHED_CSV</code> в коде страницы."
   },
   kz:{
-    title:"ChatGPT Edu — ЖОО-ларда енгізу панелі",
-    sub:"Қазақстан университеттері бойынша ChatGPT Edu лицензияларын белсендіру көрсеткіштері.",
+    title:"ChatGPT Edu — Қазақстан ЖОО-ларында",
+    sub:"Қазақстан ЖОО-лары бойынша ChatGPT Edu лицензияларын белсендіру көрсеткіштері.",
     loading:"Деректер жүктелуде…",
-    universities:"Университеттер",licenses:"Барлық лицензиялар",activated:"Белсендірілген аккаунттар",
-    national:"Орташа белсендіру (ЖОО бойынша)",overallRate:"Жалпы қамту",started:"Оқуды бастады",
+    universities:"ЖОО саны",licenses:"Барлығы бөлінген лицензиялар",activated:"Белсендірілген лицензиялар",
+    national:"Жалпы қамту (белсендіру)",natSub:"белсендірілген ÷ бөлінген лицензиялар",started:"Оқуды бастады",
     topTitle:"Белсендіру көшбасшылары",topHint:"Лицензияларды белсендіру пайызы бойынша үздік 12 ЖОО.",
     lowTitle:"Назар аударуды қажет етеді",lowHint:"Белсендіру пайызы ең төмен 12 ЖОО.",
-    spotTitle:"Университет профилі",spotHint:"ЖОО-ны табу үшін атауын тере бастаңыз.",
-    selectPh:"Университетті іздеу…",noMatch:"Ештеңе табылмады",
+    spotTitle:"ЖОО профилі",spotHint:"ЖОО-ны табу үшін атауын тере бастаңыз.",
+    selectPh:"ЖОО іздеу…",noMatch:"Ештеңе табылмады",
     sLic:"Лицензиялар",sStarted:"Оқуды бастады",sAct:"Белсендірілді",sPct:"Белсендіру пайызы",
-    bLic:"Берілген лицензиялар",bStarted:"Оқуды бастады",bAct:"Белсендірілді",bAvg:"Ел бойынша орташа",
+    bLic:"Берілген лицензиялар",bStarted:"Оқуды бастады",bAct:"Белсендірілді",bAvg:"Ел бойынша жалпы қамту",
     rank:"Ел бойынша орны",of:"ішінде",above:"орташадан жоғары",below:"орташадан төмен",
     region:"Аймақ",district:"Аудан",
-    tableTitle:"Барлық университеттер",searchPh:"ЖОО немесе аймақ бойынша іздеу…",
-    cRank:"№",cName:"Университет",cRegion:"Аймақ",cLic:"Лицензия",cStarted:"Оқуды бастады",cAct:"Белс.",cPct:"Белсендіру %",cStatus:"Статус",
+    tableTitle:"Барлық ЖОО",searchPh:"ЖОО немесе аймақ бойынша іздеу…",
+    cRank:"№",cName:"ЖОО",cRegion:"Аймақ",cLic:"Лицензия",cStarted:"Оқуды бастады",cAct:"Белс.",cPct:"Белсендіру %",cStatus:"Статус",
     st:["Назар қажет","Бастапқы кезең","Жоспар бойынша","Өте жақсы"],
     tlTitle:"Жоба мерзімі · 12 ай",tlStart:"Жобаның басталуы",tlEnd:"Жобаның аяқталуы",
     disclaimer:'Деректер Power BI арқылы ChatGPT Edu базасымен синхрондалады және <b>48 сағатқа дейін</b> кешігуі мүмкін. Деректердің соңғы ресми жаңартылған күні <a href="'+POWERBI_URL+'" target="_blank" rel="noopener">Power BI есебінің 3-бетінде</a> көрсетілген.',
@@ -441,9 +441,9 @@ function render(){
     ${timelineHTML()}
     <div class="kpis">
       <div class="kpi k1"><div class="val">${fmt(DATA.length)}</div><div class="lab">${t.universities}</div></div>
-      <div class="kpi k2"><div class="val">${fmt(NAT.lic)}</div><div class="lab">${t.licenses}</div><div class="sub" style="color:var(--accent)">${fmt(NAT.started)} ${t.started}</div></div>
+      <div class="kpi k2"><div class="val">${fmt(NAT.lic)}</div><div class="lab">${t.licenses}</div></div>
       <div class="kpi k3"><div class="val">${fmt(NAT.act)}</div><div class="lab">${t.activated}</div></div>
-      <div class="kpi" style="border-top-color:${pctColor(NAT.pctAvg)}"><div class="val" style="color:${pctColor(NAT.pctAvg)}">${NAT.pctAvg.toFixed(2)}%</div><div class="lab">${t.national}</div><div class="sub">${t.overallRate}: ${NAT.pctWeighted.toFixed(2)}%</div></div>
+      <div class="kpi" style="border-top-color:${pctColor(NAT.pctWeighted)}"><div class="val" style="color:${pctColor(NAT.pctWeighted)}">${NAT.pctWeighted.toFixed(2)}%</div><div class="lab">${t.national}</div><div class="sub">${t.natSub}</div></div>
     </div>
     <div class="grid2">
       <div class="card"><h2>${t.topTitle}</h2><p class="hint">${t.topHint}</p><div class="chartbox tall"><canvas id="cTop"></canvas></div></div>
@@ -519,7 +519,7 @@ function drawSpot(id){
       <div class="hbar"><span class="l">${t.bLic}</span><div class="track"><div class="fill" style="width:100%;background:var(--navy)"></div></div><span class="v">${fmt(r.licenses)} · 100%</span></div>
       <div class="hbar"><span class="l">${t.bStarted}</span><div class="track"><div class="fill" style="width:${Math.min(100,r.licenses?r.started/r.licenses*100:0).toFixed(2)}%;background:var(--accent)"></div></div><span class="v">${fmt(r.started)} · ${(r.licenses?r.started/r.licenses*100:0).toFixed(1)}%</span></div>
       <div class="hbar"><span class="l">${t.bAct}</span><div class="track"><div class="fill" style="width:${Math.min(100,r.pct).toFixed(2)}%;background:${pctColor(r.pct)}"></div></div><span class="v">${fmt(r.activated)} · ${r.pct.toFixed(1)}%</span></div>
-      <div class="hbar"><span class="l">${t.bAvg}</span><div class="track"><div class="fill" style="width:${Math.min(100,NAT.pctAvg).toFixed(2)}%;background:var(--neutral)"></div></div><span class="v">${NAT.pctAvg.toFixed(2)}%</span></div>
+      <div class="hbar"><span class="l">${t.bAvg}</span><div class="track"><div class="fill" style="width:${Math.min(100,NAT.pctWeighted).toFixed(2)}%;background:var(--neutral)"></div></div><span class="v">${NAT.pctWeighted.toFixed(2)}%</span></div>
     </div>
     <div class="spotmeta">
       <span><b>${esc(cleanName(r.name))}</b></span>
